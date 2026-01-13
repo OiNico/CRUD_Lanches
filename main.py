@@ -1,4 +1,4 @@
-from tkinter import *
+import tkinter as tk
 import sqlite3
 
 #Conecta com o banco e instanciona o Cursor
@@ -20,7 +20,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS categorias(
                Descricao TEXT NOT NULL
                )""")
 
-#Cria a tabela para registrar as compras                      cliente -> funcionário
+#Cria a tabela para registrar as compras
 cursor.execute("""CREATE TABLE IF NOT EXISTS vendas(
                Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                Data TEXT NOT NULL,
@@ -30,10 +30,24 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS vendas(
 conection.commit()
 conection.close()
 
-#criação e configuração da telaPrincipal
-telaInicial = Tk()
-telaInicial.title("Crud")
-telaInicial.config(height=616,width=1066)
+#criação e configuração da Janela
+Janela = tk.Tk()
+Janela.geometry("1066x616")
+Janela.title("Crud Lanches")
 
+#configuração do texto de bem vindo e do botão para ir para a tela de Cadastro
+telaInicial = tk.Frame(Janela)
+telaInicial.pack(fill="both", expand= True)
 
-telaInicial.mainloop()
+def IrTelaCadastro():
+    telaInicial.pack_forget()
+    TelaCadastro.pack()
+
+tk.Label(telaInicial, text="Bem vindo ao Sistema de Lanches", height=10, width=100).pack()
+tk.Button(telaInicial, text="Cadastrar", command=IrTelaCadastro).pack()
+
+#configuração da tela de cadastro
+TelaCadastro = tk.Frame()
+tk.Label(TelaCadastro, text="Tela de cadastro").pack(side="left")
+
+Janela.mainloop()
