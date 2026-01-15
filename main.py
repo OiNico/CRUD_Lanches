@@ -43,11 +43,11 @@ def IrTelaCadastro():
     telaInicial.pack_forget()
     TelaCadastro.pack()
 
-tk.Label(telaInicial, text="Bem vindo ao Sistema de Lanches", height=10, width=100).pack()
+tk.Label(telaInicial, text="Bem vindo ao Sistema de Lanches").pack()
 tk.Button(telaInicial, text="Cadastrar", command=IrTelaCadastro).pack()
 
 #configuração da tela de cadastro
 TelaCadastro = tk.Frame()
-tk.Label(TelaCadastro, text="Tela de cadastro").pack(side="left")
+tk.Label(TelaCadastro, text="Tela de cadastro").pack()
 
 Janela.mainloop()
