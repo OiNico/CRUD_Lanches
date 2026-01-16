@@ -37,6 +37,7 @@ class BancoDb:
 Janela = tk.Tk()
 Janela.geometry("1066x616")
 Janela.title("Crud Lanches")
+Janela.resizable(width=False,height=False)
 
 #configuração do texto de bem vindo e do botão para ir para a tela de Cadastro
 telaInicial = tk.Frame(Janela)
