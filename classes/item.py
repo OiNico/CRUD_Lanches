@@ -1,5 +1,12 @@
+import sqlite3
+from main import BancoDb
+
 class item:
-    
-    def __init__(self, nome, valor):
-        self.nome = nome
-        self.valor = valor
+    print("classe base de itens")
+
+class categoria:
+
+    def CriarCategoria(descricao):
+        BancoDb.cursor.execute("""INSERT INTO categorias
+                               (Id, Descricao) VALUES
+                               (  , {})""", descricao)
