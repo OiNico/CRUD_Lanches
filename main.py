@@ -30,6 +30,16 @@ class BancoDb:
                 ValorDaVenda FLOAT NOT NULL
                 )""")
     conection.commit()
+
+    def SelectCategorias():
+        conection = sqlite3.connect("banco.db")
+        cursor = conection.cursor()
+
+        cursor.execute("""SELECT Descricao FROM categorias""")
+        categorias = cursor.fetchall()
+
+        return categorias
+
     conection.close()
 
 
@@ -45,19 +55,13 @@ telaInicial.pack(fill="both", expand= True)
 #criação das outras telas
 TelaCadastroItens = tk.Frame()
 TelaCriarCategorias = tk.Frame()
-TelaCadastro = tk.Frame()
 
 def LimparEntry(tela):
     for widget in tela.winfo_children():
         if isinstance(widget, tk.Entry):
             widget.delete(0, tk.END)
 
-def IrTelaCadastro():
-    telaInicial.pack_forget()
-    LimparEntry(telaInicial)
-    TelaCadastro.pack(fill="both", expand=True)
 def IrTelaInicial():
-    TelaCadastro.pack_forget()
     TelaCadastroItens.pack_forget()
     TelaCriarCategorias.pack_forget()
     LimparEntry(telaInicial)
@@ -71,32 +75,11 @@ def IrTelaCriarCategorias():
 
 tk.Label(telaInicial, text="Bem vindo ao Sistema de Lanches").grid(row=0,column=0,padx=5,pady=5, sticky="w")
 
-#IrTelaCadastro botão
-tk.Button(telaInicial, text="Cadastrar Cliente", command=IrTelaCadastro).grid(row=5,column=10,padx=5, pady=5, sticky="s")
-
 #IrTelaCadastroItens botão * organizar as telas
 tk.Button(telaInicial, text="Visualizar itens", command=IrTelaCadastroItens).grid(row=5,column=9,padx=5,pady=5,sticky="s")
 
 #IrTelaCriarCategorias botão
-tk.Button(telaInicial, text="Visualizar Categoria", command=IrTelaCadastroItens).grid(row=5,column=8,padx=5,pady=5,sticky="s")
-
-#configuração da tela de cadastro
-tk.Label(TelaCadastro, text="Tela de cadastro").grid(row=0,column=0,padx=2,pady=2, sticky="nw", columnspan=2)
-
-#IrTelaInicial botão
-tk.Button(TelaCadastro, text="Voltar", command=IrTelaInicial).grid(row=10,column=0,padx=5, pady=10, sticky="w", columnspan=10)
-
-#entrada do nome do cliente
-nomeUsuario = tk.Entry(TelaCadastro, width=35)
-nomeUsuario.grid(row=5,column=1,sticky="w", padx=5, columnspan=2)
-tittleNomeUsuario = tk.Label(TelaCadastro, text="Insira seu nome: ")
-tittleNomeUsuario.grid(row=5,column=0, sticky="w", padx=5, columnspan=2)
-
-#entrada senha
-senhaUsuario = tk.Entry(TelaCadastro, width=35, show="*")
-senhaUsuario.grid(row=7,column=1, sticky="w", padx= 5)
-tittleSenhaUsuario = tk.Label(TelaCadastro, text="Insira sua senha: ")
-tittleSenhaUsuario.grid(row=7,column=0,sticky="w")
+tk.Button(telaInicial, text="Visualizar Categorias", command=IrTelaCadastroItens).grid(row=5,column=8,padx=5,pady=5,sticky="s")
 
 # Faz o grid ocupar todo o frame - by ChatGPT
 telaInicial.columnconfigure(0, weight=1)
@@ -104,6 +87,8 @@ telaInicial.columnconfigure(0, weight=1)
 #Configuração tela de cadastro de itens e de categorias
 
 #Criar categoria, precisa somente da descrição
+listBOX = tk.Listbox(TelaCriarCategorias, width=100,height=100)
+listBOX.grid(row=0, column=0,padx=5,pady=5,sticky="w")
 
 #informações p/ criar um item: Descrição, preço, Idcategoria, imagem(binária)
 
@@ -111,4 +96,5 @@ telaInicial.columnconfigure(0, weight=1)
 tk.Button(TelaCadastroItens, text="Voltar", command=IrTelaInicial).grid(row=10,column=0,padx=5, pady=10, sticky="w", columnspan=10)
 tk.Button(TelaCriarCategorias, text="Voltar", command=IrTelaInicial).grid(row=10,column=0,padx=5, sticky="w")
 
-Janela.mainloop()
+if __name__ == "__main__":
+    Janela.mainloop()
