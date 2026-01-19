@@ -1,6 +1,7 @@
 import tkinter as tk
 import sqlite3
-from classes import *
+from itemCARA import Categoria
+
 
 class BancoDb:
     #Conecta com o banco e instanciona o Cursor
@@ -89,6 +90,10 @@ telaInicial.columnconfigure(0, weight=1)
 #Criar categoria, precisa somente da descrição
 listBOX = tk.Listbox(TelaCriarCategorias, width=100,height=100)
 listBOX.grid(row=0, column=0,padx=5,pady=5,sticky="w")
+
+CarregarLISTAcategorias = Categoria.CarregarListBOX()
+
+tk.Button(TelaCriarCategorias, text="Carregar Categorias", command=CarregarLISTAcategorias).grid(row=10,column=1,padx=5,sticky="w")
 
 #informações p/ criar um item: Descrição, preço, Idcategoria, imagem(binária)
 

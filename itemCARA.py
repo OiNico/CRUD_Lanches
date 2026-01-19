@@ -2,10 +2,10 @@ import sqlite3
 from main import BancoDb
 import tkinter as tk
 
-class item:
+class Item:
     print("classe base de itens")
 
-class categoria:
+class Categoria:
 
     def CriarCategoria(descricao):
         BancoDb.cursor.execute("""INSERT INTO categorias
