@@ -1,7 +1,5 @@
 import tkinter as tk
 import sqlite3
-from itemCARA import Categoria
-
 
 class BancoDb:
     #Conecta com o banco e instanciona o Cursor
@@ -40,6 +38,15 @@ class BancoDb:
         categorias = cursor.fetchall()
 
         return categorias
+    def CriarCategoria(descricao):
+        conection = sqlite3.connect("banco.db")
+        cursor = conection.cursor()
+        
+        cursor.execute("""INSERT INTO categorias
+                                (Descricao) VALUES
+                                (?)""", (descricao,))
+        conection.close()
+    
 
     conection.close()
 
@@ -88,18 +95,28 @@ telaInicial.columnconfigure(0, weight=1)
 #Configuração tela de cadastro de itens e de categorias
 
 #Criar categoria, precisa somente da descrição
-listBOX = tk.Listbox(TelaCriarCategorias, width=100,height=100)
-listBOX.grid(row=0, column=0,padx=5,pady=5,sticky="w")
 
-CarregarLISTAcategorias = Categoria.CarregarListBOX()
+descricaoCATEGORIA = tk.Entry(TelaCriarCategorias)
+descricaoCATEGORIA.grid(row=9, column=0, sticky="n", columnspan= 10)
 
-tk.Button(TelaCriarCategorias, text="Carregar Categorias", command=CarregarLISTAcategorias).grid(row=10,column=1,padx=5,sticky="w")
+CriarCategoria = BancoDb.CriarCategoria(descricaoCATEGORIA.get())
+
+btnCriarCategoria = tk.Button(TelaCriarCategorias, text="Criar Categoria", command=CriarCategoria)
+btnCriarCategoria.grid(row=9, column=0,sticky="n", columnspan=10)
+
+#listBOX = tk.Listbox(TelaCriarCategorias, width=100,height=100)    ---Terminar dps
+#listBOX.grid(row=0, column=0,padx=5,pady=5,sticky="s")
+#CarregarLISTAcategorias = CategoriaCARA.CarregarListBox(listBOX)
+#tk.Button(TelaCriarCategorias, text="Carregar Categorias", command=CarregarLISTAcategorias).grid(row=10,column=1,padx=5,sticky="w")
+
 
 #informações p/ criar um item: Descrição, preço, Idcategoria, imagem(binária)
 
 #IrTelaInicial Botão
-tk.Button(TelaCadastroItens, text="Voltar", command=IrTelaInicial).grid(row=10,column=0,padx=5, pady=10, sticky="w", columnspan=10)
-tk.Button(TelaCriarCategorias, text="Voltar", command=IrTelaInicial).grid(row=10,column=0,padx=5, sticky="w")
+#ITENS -> Inicio
+tk.Button(TelaCadastroItens, text="Voltar", command=IrTelaInicial).grid(row=10,column=0,sticky="s", columnspan=10)
+#CATEGORIAS -> Inicio
+tk.Button(TelaCriarCategorias, text="Voltar", command=IrTelaInicial).grid(row=10,column=0, sticky="s")
 
 if __name__ == "__main__":
     Janela.mainloop()

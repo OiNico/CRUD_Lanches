@@ -1,21 +1,11 @@
 import sqlite3
 from main import BancoDb
-import tkinter as tk
 
-class Item:
-    print("classe base de itens")
+class CategoriaCARA:
 
-class Categoria:
-
-    def CriarCategoria(descricao):
-        BancoDb.cursor.execute("""INSERT INTO categorias
-                               (Id, Descricao) VALUES
-                               (  , {})""", descricao)
-        
-    
     def CarregarListBox(listBOX):
-        listBOX.delete(0, tk.END)
+        listBOX.delete(0)
         categorias = BancoDb.SelectCategorias()
 
         for categoria in categorias:
-            listBOX.insert(tk.END, categorias[0])
+            listBOX.insert( categorias[0])
