@@ -1,5 +1,7 @@
 import tkinter as tk
 import sqlite3
+from tkinter import messagebox
+from tkinter import ttk
 
 class BancoDb:
     #Conecta com o banco e instanciona o Cursor
@@ -38,15 +40,39 @@ class BancoDb:
         categorias = cursor.fetchall()
 
         return categorias
-    def CriarCategoria(descricao):
+    def CriarCategoria():
+        descricao = descricaoCATEGORIA.get()
         conection = sqlite3.connect("banco.db")
         cursor = conection.cursor()
         
         cursor.execute("""INSERT INTO categorias
                                 (Descricao) VALUES
                                 (?)""", (descricao,))
+        
+        conection.commit()
         conection.close()
     
+    def LimparCategoria():
+        conection = sqlite3.connect("banco.db")
+        cursor = conection.cursor()
+        
+        if messagebox.askyesno("Confirmação", "Deseja realmente apagar a última categoria criada?"):
+            cursor.execute("""DELETE FROM categorias
+                       where Id = (
+                            SELECT Id FROM categorias
+                            ORDER BY Id DESC
+                            LIMIT 1)""")
+        
+
+        conection.commit()
+        conection.close()
+    def RecarregarCategoria():
+        VIEWcategorias.delete(0, tk.END)
+        
+        categoriasEXISTENTES = BancoDb.SelectCategorias()
+        
+        for c in categoriasEXISTENTES:
+            VIEWcategorias.insert(tk.END, c[0])
 
     conection.close()
 
@@ -56,6 +82,12 @@ Janela = tk.Tk()
 Janela.geometry("1066x616")
 Janela.title("Crud Lanches")
 Janela.resizable(width=False,height=False)
+
+#centraliza a tela
+Janela.update_idletasks()
+x = (Janela.winfo_screenwidth() - Janela.winfo_width())//2
+y = (Janela.winfo_screenheight() - Janela.winfo_height())//2
+Janela.geometry(f"+{x}+{y}")
 
 #configuração do texto de bem vindo e do botão para ir para a tela de Cadastro
 telaInicial = tk.Frame(Janela)
@@ -72,7 +104,6 @@ def LimparEntry(tela):
 def IrTelaInicial():
     TelaCadastroItens.pack_forget()
     TelaCriarCategorias.pack_forget()
-    LimparEntry(telaInicial)
     telaInicial.pack(fill="both",expand=True)
 def IrTelaCadastroItens():
     telaInicial.pack_forget()
@@ -87,7 +118,7 @@ tk.Label(telaInicial, text="Bem vindo ao Sistema de Lanches").grid(row=0,column=
 tk.Button(telaInicial, text="Visualizar itens", command=IrTelaCadastroItens).grid(row=5,column=9,padx=5,pady=5,sticky="s")
 
 #IrTelaCriarCategorias botão
-tk.Button(telaInicial, text="Visualizar Categorias", command=IrTelaCadastroItens).grid(row=5,column=8,padx=5,pady=5,sticky="s")
+tk.Button(telaInicial, text="Visualizar Categorias", command=IrTelaCriarCategorias).grid(row=5,column=8,padx=5,pady=5,sticky="s")
 
 # Faz o grid ocupar todo o frame - by ChatGPT
 telaInicial.columnconfigure(0, weight=1)
@@ -95,28 +126,30 @@ telaInicial.columnconfigure(0, weight=1)
 #Configuração tela de cadastro de itens e de categorias
 
 #Criar categoria, precisa somente da descrição
+VIEWcategorias = tk.Listbox(TelaCriarCategorias, width=82, height=20)
+VIEWcategorias.grid(row=0,column=0, sticky="nw", rowspan=2, padx= 5, pady=5)
 
-descricaoCATEGORIA = tk.Entry(TelaCriarCategorias)
-descricaoCATEGORIA.grid(row=9, column=0, sticky="n", columnspan= 10)
+descricaoCATEGORIA = tk.Entry(TelaCriarCategorias, width=20)
+descricaoCATEGORIA.grid(row=6, column=0, sticky="w", padx=10)
 
-CriarCategoria = BancoDb.CriarCategoria(descricaoCATEGORIA.get())
+btnCriarCategoria = tk.Button(TelaCriarCategorias, text="Criar Categoria", command=BancoDb.CriarCategoria)
+btnCriarCategoria.grid(row=6, column=0,sticky="w", padx=140)
 
-btnCriarCategoria = tk.Button(TelaCriarCategorias, text="Criar Categoria", command=CriarCategoria)
-btnCriarCategoria.grid(row=9, column=0,sticky="n", columnspan=10)
+btnExcluirCategoria = tk.Button(TelaCriarCategorias, text="Excluir Última Categoria", command=BancoDb.LimparCategoria)
+btnExcluirCategoria.grid(row=7, column=0, sticky="w", padx=125)
 
-#listBOX = tk.Listbox(TelaCriarCategorias, width=100,height=100)    ---Terminar dps
-#listBOX.grid(row=0, column=0,padx=5,pady=5,sticky="s")
-#CarregarLISTAcategorias = CategoriaCARA.CarregarListBox(listBOX)
-#tk.Button(TelaCriarCategorias, text="Carregar Categorias", command=CarregarLISTAcategorias).grid(row=10,column=1,padx=5,sticky="w")
+btnRecarregar = tk.Button(TelaCriarCategorias, text="Recarregar", command=BancoDb.RecarregarCategoria)
+btnRecarregar.grid(row=7, column=0, sticky="w", padx= 55)
 
+#CATEGORIAS -> Inicio
+VOLTARcategorias = tk.Button(TelaCriarCategorias, text="Voltar", command=IrTelaInicial)
+VOLTARcategorias.grid(row=7,column=0, sticky="w", padx=10)
 
 #informações p/ criar um item: Descrição, preço, Idcategoria, imagem(binária)
 
-#IrTelaInicial Botão
 #ITENS -> Inicio
-tk.Button(TelaCadastroItens, text="Voltar", command=IrTelaInicial).grid(row=10,column=0,sticky="s", columnspan=10)
-#CATEGORIAS -> Inicio
-tk.Button(TelaCriarCategorias, text="Voltar", command=IrTelaInicial).grid(row=10,column=0, sticky="s")
+VOLTARitens = tk.Button(TelaCadastroItens, text="AAA", command=IrTelaInicial)
+VOLTARitens.grid(row=10,column=0,sticky="s", columnspan=10)
 
 if __name__ == "__main__":
     Janela.mainloop()
