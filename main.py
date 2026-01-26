@@ -32,14 +32,15 @@ class BancoDb:
                 )""")
     conection.commit()
 
-    def SelectCategorias():
+    def SelectDadosCat():
         conection = sqlite3.connect("banco.db")
         cursor = conection.cursor()
 
-        cursor.execute("""SELECT Descricao FROM categorias""")
-        categorias = cursor.fetchall()
+        cursor.execute("""SELECT Id,Descricao FROM categorias""")
+        Dados = cursor.fetchall()
 
-        return categorias
+        return Dados
+
     def CriarCategoria():
         descricao = descricaoCATEGORIA.get()
         conection = sqlite3.connect("banco.db")
@@ -51,28 +52,41 @@ class BancoDb:
         
         conection.commit()
         conection.close()
+        descricaoCATEGORIA.delete(0, "end")
+        BancoDb.RecarregarCategoria()
     
     def LimparCategoria():
+        selecionado = VIEWcat.selection()
+        if not selecionado:
+            messagebox.askokcancel("Alerta", "Nenhuma categoria selecionada")
+            return 
+        
+        valores = VIEWcat.item(selecionado)["values"]
+        id_categoria = valores[0]
+        
         conection = sqlite3.connect("banco.db")
         cursor = conection.cursor()
         
-        if messagebox.askyesno("Confirmação", "Deseja realmente apagar a última categoria criada?"):
+        if messagebox.askyesno("Confirmação", "Deseja realmente apagar a categoria selecionada?"):
             cursor.execute("""DELETE FROM categorias
                        where Id = (
                             SELECT Id FROM categorias
-                            ORDER BY Id DESC
-                            LIMIT 1)""")
+                            WHERE Id = ?)""", (id_categoria,))
         
 
         conection.commit()
         conection.close()
+        BancoDb.RecarregarCategoria()
     def RecarregarCategoria():
-        VIEWcategorias.delete(0, tk.END)
+        VIEWcat.delete(*VIEWcat.get_children())
+        for c in BancoDb.SelectDadosCat():
+            VIEWcat.insert("", "end", values=c)
         
+        """
         categoriasEXISTENTES = BancoDb.SelectCategorias()
-        
         for c in categoriasEXISTENTES:
             VIEWcategorias.insert(tk.END, c[0])
+        """
 
     conection.close()
 
@@ -126,8 +140,13 @@ telaInicial.columnconfigure(0, weight=1)
 #Configuração tela de cadastro de itens e de categorias
 
 #Criar categoria, precisa somente da descrição
-VIEWcategorias = tk.Listbox(TelaCriarCategorias, width=82, height=20)
-VIEWcategorias.grid(row=0,column=0, sticky="nw", rowspan=2, padx= 5, pady=5)
+#VIEWcategorias = tk.Listbox(TelaCriarCategorias, width=82, height=20)
+#VIEWcategorias.grid(row=0,column=0, sticky="nw", rowspan=2, padx= 5, pady=5)
+VIEWcat = ttk.Treeview(TelaCriarCategorias,columns=("id","nome"), show="headings", height=10 )
+VIEWcat.heading("id", text="id")
+VIEWcat.heading("nome", text="nome")
+VIEWcat.grid(row=0,column=0, sticky="nw", rowspan=2, padx= 5, pady=5)
+
 
 descricaoCATEGORIA = tk.Entry(TelaCriarCategorias, width=20)
 descricaoCATEGORIA.grid(row=6, column=0, sticky="w", padx=10)
@@ -135,11 +154,8 @@ descricaoCATEGORIA.grid(row=6, column=0, sticky="w", padx=10)
 btnCriarCategoria = tk.Button(TelaCriarCategorias, text="Criar Categoria", command=BancoDb.CriarCategoria)
 btnCriarCategoria.grid(row=6, column=0,sticky="w", padx=140)
 
-btnExcluirCategoria = tk.Button(TelaCriarCategorias, text="Excluir Última Categoria", command=BancoDb.LimparCategoria)
+btnExcluirCategoria = tk.Button(TelaCriarCategorias, text="Excluir Categoria", command=BancoDb.LimparCategoria)
 btnExcluirCategoria.grid(row=7, column=0, sticky="w", padx=125)
-
-btnRecarregar = tk.Button(TelaCriarCategorias, text="Recarregar", command=BancoDb.RecarregarCategoria)
-btnRecarregar.grid(row=7, column=0, sticky="w", padx= 55)
 
 #CATEGORIAS -> Inicio
 VOLTARcategorias = tk.Button(TelaCriarCategorias, text="Voltar", command=IrTelaInicial)
@@ -148,8 +164,11 @@ VOLTARcategorias.grid(row=7,column=0, sticky="w", padx=10)
 #informações p/ criar um item: Descrição, preço, Idcategoria, imagem(binária)
 
 #ITENS -> Inicio
-VOLTARitens = tk.Button(TelaCadastroItens, text="AAA", command=IrTelaInicial)
+VOLTARitens = tk.Button(TelaCadastroItens, text="Voltar", command=IrTelaInicial)
 VOLTARitens.grid(row=10,column=0,sticky="s", columnspan=10)
+
+#TELA ITENS
+tk.Label(TelaCadastroItens, text="Itens").grid(column=0,row=0, padx=5,pady=5, sticky="n")
 
 if __name__ == "__main__":
     Janela.mainloop()
