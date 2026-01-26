@@ -93,7 +93,7 @@ class BancoDb:
 
 #criação e configuração da Janela
 Janela = tk.Tk()
-Janela.geometry("1066x616")
+Janela.geometry("1066x500")
 Janela.title("Crud Lanches")
 Janela.resizable(width=False,height=False)
 
@@ -129,7 +129,7 @@ def IrTelaCriarCategorias():
 tk.Label(telaInicial, text="Bem vindo ao Sistema de Lanches").grid(row=0,column=0,padx=5,pady=5, sticky="w")
 
 #IrTelaCadastroItens botão * organizar as telas
-tk.Button(telaInicial, text="Visualizar itens", command=IrTelaCadastroItens).grid(row=5,column=9,padx=5,pady=5,sticky="s")
+tk.Button(telaInicial, text="Visualizar Produtos", command=IrTelaCadastroItens).grid(row=5,column=9,padx=5,pady=5,sticky="s")
 
 #IrTelaCriarCategorias botão
 tk.Button(telaInicial, text="Visualizar Categorias", command=IrTelaCriarCategorias).grid(row=5,column=8,padx=5,pady=5,sticky="s")
@@ -137,12 +137,8 @@ tk.Button(telaInicial, text="Visualizar Categorias", command=IrTelaCriarCategori
 # Faz o grid ocupar todo o frame - by ChatGPT
 telaInicial.columnconfigure(0, weight=1)
 
-#Configuração tela de cadastro de itens e de categorias
-
-#Criar categoria, precisa somente da descrição
-#VIEWcategorias = tk.Listbox(TelaCriarCategorias, width=82, height=20)
-#VIEWcategorias.grid(row=0,column=0, sticky="nw", rowspan=2, padx= 5, pady=5)
-VIEWcat = ttk.Treeview(TelaCriarCategorias,columns=("id","nome"), show="headings", height=10 )
+#TELA CATEGORIAS
+VIEWcat = ttk.Treeview(TelaCriarCategorias,columns=("id","nome"), show="headings", height=10)
 VIEWcat.heading("id", text="id")
 VIEWcat.heading("nome", text="nome")
 VIEWcat.grid(row=0,column=0, sticky="nw", rowspan=2, padx= 5, pady=5)
@@ -155,20 +151,37 @@ btnCriarCategoria = tk.Button(TelaCriarCategorias, text="Criar Categoria", comma
 btnCriarCategoria.grid(row=6, column=0,sticky="w", padx=140)
 
 btnExcluirCategoria = tk.Button(TelaCriarCategorias, text="Excluir Categoria", command=BancoDb.LimparCategoria)
-btnExcluirCategoria.grid(row=7, column=0, sticky="w", padx=125)
+btnExcluirCategoria.grid(row=6, column=0, sticky="e", padx=55)
 
 #CATEGORIAS -> Inicio
 VOLTARcategorias = tk.Button(TelaCriarCategorias, text="Voltar", command=IrTelaInicial)
-VOLTARcategorias.grid(row=7,column=0, sticky="w", padx=10)
+VOLTARcategorias.grid(row=6,column=0, sticky="e", padx=10)
 
-#informações p/ criar um item: Descrição, preço, Idcategoria, imagem(binária)
 
 #ITENS -> Inicio
 VOLTARitens = tk.Button(TelaCadastroItens, text="Voltar", command=IrTelaInicial)
-VOLTARitens.grid(row=10,column=0,sticky="s", columnspan=10)
+VOLTARitens.grid(row=10,column=0,sticky="e", columnspan=10)
 
 #TELA ITENS
-tk.Label(TelaCadastroItens, text="Itens").grid(column=0,row=0, padx=5,pady=5, sticky="n")
+tk.Label(TelaCadastroItens, text="Produtos").grid(column=0,row=0, padx=5,pady=5, sticky="w")
+
+#informações p/ criar um item: Descrição, preço, Idcategoria, imagem(binária)
+VIEWitems = ttk.Treeview(TelaCadastroItens, columns=("id", "nome", "preço", "id_categoria", "img"), show="headings", height=10)
+VIEWitems.heading("id", text="id")
+VIEWitems.heading("nome", text="nome")
+VIEWitems.heading("preço", text="preço")
+VIEWitems.heading("id_categoria", text="categoria")
+VIEWitems.heading("img", text="Imagem do Item")
+VIEWitems.grid(column=0, row=1, padx=10, pady=5, sticky="w")
+
+#INFO IdCategoria
+
+#INFO DESCRIÇÃO
+
+#INFO PREÇO
+
+#INFO Img
 
 if __name__ == "__main__":
+    BancoDb.RecarregarCategoria()
     Janela.mainloop()
