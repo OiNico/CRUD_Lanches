@@ -14,13 +14,15 @@ class BancoDb:
                 Descricao TEXT NOT NULL,
                 Preco FLOAT NOT NULL,
                 IdCategoria INTEGER,
-                Imagem BLOB
+                Imagem BLOB,
+                Visibilidade BOOL NOT NULL
                 )""")
 
     #Cria a tabela de categorias dos produtos
     cursor.execute("""CREATE TABLE IF NOT EXISTS categorias(
                 Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                Descricao TEXT NOT NULL
+                Descricao TEXT NOT NULL,
+                Visibilidade BOOL NOT NULL
                 )""")
 
     #Cria a tabela para registrar as compras
